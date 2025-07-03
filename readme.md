@@ -22,49 +22,55 @@ Ce backend gère l’ensemble des fonctionnalités liées aux utilisateurs, à l
 
 ## 📁 Structure du projet
 
-backend/
-├── controllers/
-│   ├── authController.js
-│   ├── budgetController.js
-│   ├── categoryController.js
-│   ├── reportController.js
-│   ├── settingsController.js
-│   ├── transactionsController.js
-│   └── usersController.js
-├── models/
-│   ├── authModel.js
-│   ├── budgetModel.js
-│   ├── categoryModel.js
-│   ├── reportModel.js
-│   ├── settingsModel.js
-│   ├── transactionsModel.js
-│   └── usersModel.js
-├── routes/
-│   ├── auth.js
-│   ├── budget.js
-│   ├── categories.js
-│   ├── reports.js
-│   ├── settings.js
-│   ├── transactions.js
-│   └── users.js
-├── database/
-│   ├── connection.js
-│   ├── errorHandler.js
-│   ├── jwtHelper.js
-│   ├── passwordUtils.js
-│   ├── queries.js
-│   └── schema.sql (à créer)
-├── middleware/
-│   └── authMiddleware.js
-├── utils/
-│   ├── errorHandler.js
-│   ├── jwtHelper.js
-│   └── passwordUtils.js
-├── .env
-├── .gitignore
-├── package.json
-├── package-lock.json
-└── server.js
+backend :
+controllers :
+- authController.js
+- budgetController.js
+- categoryController.js
+- reportController.js
+- settingsController.js
+- transactionsController.js
+- usersController.js
+
+models :
+- authModel.js
+- budgetModel.js
+- categoryModel.js
+- reportModel.js
+- settingsModel.js
+- transactionsModel.js
+- usersModel.js
+
+routes :
+- auth.js
+- budget.js
+- categories.js
+- reports.js
+- settings.js
+- transactions.js
+- users.js
+
+database :
+- connection.js
+- errorHandler.js
+- jwtHelper.js
+- passwordUtils.js
+- queries.js
+- chema.sql (à créer)
+
+middleware :
+- authMiddleware.js
+
+utils :
+- errorHandler.js
+- jwtHelper.js
+- passwordUtils.js
+
+.env
+.gitignore
+package.json
+package-lock.json
+server.js
 
 Fonctionnalités principales
 
