@@ -1,28 +1,49 @@
+// controllers/settingsController.js
+
 const settingsModel = require('../models/settingsModel');
 
+// =====================================================
 // Récupérer les paramètres d’un utilisateur
+// Route : GET /api/settings/:userId
+// Sécurisée via middleware (token)
+// =====================================================
 async function getUserSettings(req, res) {
   try {
-    const userId = req.params.userId;
-    const settings = await settingsModel.getSettingsByUserId(userId);
+    const id_user = req.params.userId;
+
+    const settings = await settingsModel.getSettingsByUserId(id_user);
+
     if (!settings) {
-      return res.status(404).json({ message: 'Paramètres non trouvés' });
+      return res.status(404).json({ message: 'Paramètres non trouvés pour cet utilisateur' });
     }
-    res.json(settings);
+
+    res.status(200).json(settings);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erreur dans getUserSettings :', error);
+    res.status(500).json({ error: 'Erreur serveur lors de la récupération des paramètres' });
   }
 }
 
+// =====================================================
 // Mettre à jour les paramètres d’un utilisateur
+// Route : PUT /api/settings/:userId
+// Body attendu : { theme, langue_preferree, ... }
+// =====================================================
 async function updateUserSettings(req, res) {
   try {
-    const userId = req.params.userId;
-    const newSettings = req.body;  // attend un objet avec les champs à modifier
-    await settingsModel.updateSettings(userId, newSettings);
-    res.json({ message: 'Paramètres mis à jour' });
+    const id_user = req.params.userId;
+    const newSettings = req.body;
+
+    if (!newSettings || Object.keys(newSettings).length === 0) {
+      return res.status(400).json({ message: 'Aucun paramètre à mettre à jour' });
+    }
+
+    await settingsModel.updateSettings(id_user, newSettings);
+
+    res.status(200).json({ message: 'Paramètres mis à jour avec succès' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erreur dans updateUserSettings :', error);
+    res.status(500).json({ error: 'Erreur serveur lors de la mise à jour des paramètres' });
   }
 }
 

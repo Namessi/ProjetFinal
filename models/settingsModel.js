@@ -1,15 +1,25 @@
+// models/settingsModel.js
+
 const db = require('../db/connection');
 
-// Récupérer les paramètres d’un utilisateur
-async function getSettingsByUserId(userId) {
-  const [rows] = await db.query('SELECT * FROM settings WHERE user_id = ?', [userId]);
-  return rows[0];  // retourne l'objet des paramètres
+// =====================================================
+// Obtenir les paramètres d’un utilisateur
+// Retourne un objet avec les préférences (thème, langue, etc.)
+// =====================================================
+async function getSettingsByUserId(id_user) {
+  const [rows] = await db.query(
+    'SELECT * FROM parametres_utilisateur WHERE id_user = ?',
+    [id_user]
+  );
+  return rows[0]; // Retourne un seul objet de paramètres
 }
 
+// =====================================================
 // Mettre à jour les paramètres d’un utilisateur
-async function updateSettings(userId, settings) {
-  // Exemple simple, ici on considère que settings est un objet avec des clés correspondant aux colonnes de la table
-  // Préparer la requête dynamique en fonction des clés reçues
+// settings = { theme: 'sombre', langue_preferree: 'fr', ... }
+// Génère une requête SQL dynamique en fonction des clés reçues
+// =====================================================
+async function updateSettings(id_user, settings) {
   const keys = Object.keys(settings);
   const values = Object.values(settings);
 
@@ -17,13 +27,10 @@ async function updateSettings(userId, settings) {
     throw new Error('Aucun paramètre à mettre à jour');
   }
 
-  // Construction dynamique du SET clause : "col1 = ?, col2 = ?, ..."
   const setClause = keys.map(key => `${key} = ?`).join(', ');
+  values.push(id_user); // Pour le WHERE
 
-  // Ajouter userId à la fin des valeurs pour le WHERE
-  values.push(userId);
-
-  const sql = `UPDATE settings SET ${setClause} WHERE user_id = ?`;
+  const sql = `UPDATE parametres_utilisateur SET ${setClause} WHERE id_user = ?`;
   await db.query(sql, values);
 }
 

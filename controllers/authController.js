@@ -1,52 +1,79 @@
-const authModel = require('../models/authModel');
-const { hashPassword, comparePassword } = require('../utils/passwordUtils');
+// controllers/authController.js
+const bcrypt = require('bcrypt');
 const { generateToken } = require('../utils/jwtHelper');
+const authModel = require('../models/authModel');
 
-// Clé secrète retirée d'ici pour être dans jwtHelper (ou .env)
-
-// Fonction pour gérer l'inscription d'un utilisateur
+/**
+ * Enregistre un nouvel utilisateur
+ * Route : POST /api/auth/register
+ */
 async function register(req, res) {
   try {
     const { username, email, password } = req.body;
 
-    const existingUser = await authModel.getUserByEmail(email);
-    if (existingUser) {
-      return res.status(400).json({ message: 'Email déjà utilisé' });
+    // Vérification des champs obligatoires
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: 'Tous les champs sont requis.' });
     }
 
-    // Utilisation du hashage via passwordUtils
-    const hashedPassword = await hashPassword(password);
+    // Vérifier si l'utilisateur existe déjà
+    const existingUser = await authModel.findUserByEmail(email);
+    if (existingUser) {
+      return res.status(409).json({ error: 'Cet e-mail est déjà utilisé.' });
+    }
 
+    // Hasher le mot de passe
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Enregistrer l'utilisateur
     const userId = await authModel.createUser(username, email, hashedPassword);
 
-    res.status(201).json({ message: 'Utilisateur créé', userId });
+    // Générer un token
+    const token = generateToken({ id: userId, email });
+
+    res.status(201).json({
+      message: 'Utilisateur enregistré avec succès.',
+      userId,
+      token,
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erreur dans register :', error);
+    res.status(500).json({ error: 'Erreur serveur lors de l’inscription' });
   }
 }
 
-// Fonction pour gérer la connexion d'un utilisateur
+/**
+ * Connecte un utilisateur existant
+ * Route : POST /api/auth/login
+ */
 async function login(req, res) {
   try {
     const { email, password } = req.body;
 
-    const user = await authModel.getUserByEmail(email);
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email et mot de passe requis.' });
+    }
+
+    const user = await authModel.findUserByEmail(email);
     if (!user) {
-      return res.status(400).json({ message: 'Email ou mot de passe incorrect' });
+      return res.status(401).json({ error: 'Identifiants invalides.' });
     }
 
-    // Utilisation de la comparaison via passwordUtils
-    const validPassword = await comparePassword(password, user.password);
-    if (!validPassword) {
-      return res.status(400).json({ message: 'Email ou mot de passe incorrect' });
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.status(401).json({ error: 'Mot de passe incorrect.' });
     }
 
-    // Utilisation de la génération du token via jwtHelper
     const token = generateToken({ id: user.id, email: user.email });
 
-    res.json({ message: 'Connexion réussie', token });
+    res.json({
+      message: 'Connexion réussie',
+      token,
+      user: { id: user.id, username: user.username, email: user.email },
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erreur dans login :', error);
+    res.status(500).json({ error: 'Erreur serveur lors de la connexion' });
   }
 }
 
@@ -54,3 +81,4 @@ module.exports = {
   register,
   login,
 };
+

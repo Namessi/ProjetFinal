@@ -2,7 +2,7 @@
 
 Ce dépôt contient **le backend complet** d'une application de gestion de budget personnel.  
 Il s'agit d'un serveur API développé avec **Node.js**, structuré selon le modèle **MVC** (Modèle – Vue – Contrôleur), et connecté à une base de données **MySQL**.  
-Ce backend gère l’ensemble des fonctionnalités liées aux utilisateurs, à leurs transactions, budgets, paramètres, catégories et rapports.
+Ce backend gère l’ensemble des fonctionnalités liées aux utilisateurs, transactions, budgets, paramètres, catégories et rapports.
 
 ---
 
@@ -12,152 +12,148 @@ Ce backend gère l’ensemble des fonctionnalités liées aux utilisateurs, à l
 - **Express.js** (framework HTTP léger et rapide)
 - **MySQL2** (client pour interagir avec la base de données MySQL)
 - **dotenv** (pour la gestion des variables d’environnement)
-- **jsonwebtoken** (gestion des tokens JWT pour l’authentification)
+- **jsonwebtoken** (authentification via tokens JWT)
 - **bcryptjs** (hachage sécurisé des mots de passe)
 - **cors** (autorisation des requêtes cross-origin)
 - **morgan** (logs de requêtes HTTP pour le développement)
-- **Nodemon** (utilitaire pour recharger automatiquement le serveur en développement)
+- **nodemon** (rechargement automatique du serveur)
 
 ---
 
 ## 📁 Structure du projet
 
 backend :
-controllers :
-- authController.js
-- budgetController.js
-- categoryController.js
-- reportController.js
-- settingsController.js
-- transactionsController.js
-- usersController.js
+- controllers :
+    - authController.js
+    - budgetController.js
+    - categoryController.js
+    - reportController.js
+    - settingsController.js
+    - transactionsController.js
+    - usersController.js
+- models :
+    - authModel.js
+    - budgetModel.js
+    - categoryModel.js
+    - reportModel.js
+    - settingsModel.js
+    - transactionsModel.js
+    - usersModel.js
+- routes :
+    - auth.js
+    - budget.js
+    - categories.js
+    - reports.js
+    - settings.js
+    - transactions.js
+    - users.js
+- database :
+    - connection.js
+    - queries.sql (requêtes préparées ou inserts manuels)
+- middleware :
+    - authMiddleware.js
+- utils :
+    - jwtHelper.js
+    - passwordUtils.js
+    - errorHandler.js
 
-models :
-- authModel.js
-- budgetModel.js
-- categoryModel.js
-- reportModel.js
-- settingsModel.js
-- transactionsModel.js
-- usersModel.js
+Autres fichiers :
+- .env
+- .gitignore
+- package.json
+- package-lock.json
+- server.js
 
-routes :
-- auth.js
-- budget.js
-- categories.js
-- reports.js
-- settings.js
-- transactions.js
-- users.js
+---
 
-database :
-- connection.js
-- errorHandler.js
-- jwtHelper.js
-- passwordUtils.js
-- queries.js
-- chema.sql (à créer)
+## ✅ Fonctionnalités principales
 
-middleware :
-- authMiddleware.js
+- Authentification sécurisée (inscription, connexion, JWT, hash des mots de passe)
+- Création et connexion utilisateur
+- Ajout de transactions avec catégories
+- Définition de budgets mensuels personnalisés
+- Paramètres personnalisés par utilisateur
+- Catégorisation : dépenses / revenus
+- Génération de rapports mensuels
+- Middleware d'authentification sur routes sensibles
+- Structure MVC claire et scalable
 
-utils :
-- errorHandler.js
-- jwtHelper.js
-- passwordUtils.js
+---
 
-.env
-.gitignore
-package.json
-package-lock.json
-server.js
+## 📌 Exemples d’Endpoints
 
-Fonctionnalités principales
+### 🔐 Authentification
+- `POST /api/auth/register` → Créer un nouveau compte utilisateur
+- `POST /api/auth/login` → Connexion avec génération de token JWT
 
-✅ Authentification sécurisée (inscription, connexion, JWT, hash des mots de passe)
+### 👤 Utilisateurs
+- `GET /api/users` → Récupérer tous les utilisateurs
+- `PUT /api/users/:id` → Mettre à jour un utilisateur
+- `DELETE /api/users/:id` → Supprimer un utilisateur
 
-✅ Gestion des utilisateurs (profil, suppression, mise à jour)
+### 💸 Transactions
+- `POST /api/transactions/user/:userId` → Créer une transaction
+- `GET /api/transactions/user/:userId` → Récupérer les transactions
+- `PUT /api/transactions/:transactionId` → Modifier une transaction
+- `DELETE /api/transactions/:transactionId` → Supprimer une transaction
 
-✅ Création et suivi de budgets
+### 📊 Budgets
+- `POST /api/budget` → Définir un budget mensuel
+- `GET /api/budget/:userId` → Voir les budgets d’un utilisateur
 
-✅ Enregistrement des transactions (recettes, dépenses)
+### 🗂️ Catégories
+- `GET /api/categories` → Liste des 16 catégories (alimentation, logement, revenus...)
 
-✅ Catégorisation des transactions
+### ⚙️ Paramètres
+- `GET /api/settings/:userId` → Voir les préférences utilisateur
+- `PUT /api/settings/:userId` → Modifier thème, langue, etc.
 
-✅ Paramètres personnalisés par utilisateur
+### 📈 Rapports
+- `GET /api/reports/:userId` → Statistiques mensuelles (revenus - dépenses)
 
-✅ Génération de rapports de dépenses et revenus
+---
 
-✅ Protection des routes par middleware JWT
+## 🧪 Tests réalisés (Postman)
 
-✅ Modularisation claire (MVC, helpers, middleware, etc.)
+- ✅ `POST /auth/register` (Inscription) → OK
+- ✅ `POST /auth/login` (Connexion + Token) → OK
+- ✅ `POST /transactions/user/:userId` (Création transaction) → OK
 
-Exemples d’Endpoints
+🔜 **Les autres routes seront testées plus tard**, après ce premier commit stable.
 
-Authentification
-POST /auth/register → Créer un nouveau compte utilisateur
+---
 
-POST /auth/login → Connexion avec génération de token JWT
+## ✅ Bonnes pratiques respectées
 
-Utilisateurs
-GET /users → Récupérer tous les utilisateurs
+- Séparation des responsabilités (controllers, routes, models)
+- Gestion centralisée des erreurs
+- Middleware d’authentification pour sécuriser les accès
+- Réutilisation de fonctions utilitaires
+- Nom des routes cohérent avec REST
+- Variables sensibles dans un `.env`
 
-PUT /users/:id → Mettre à jour un utilisateur
+---
 
-DELETE /users/:id → Supprimer un utilisateur
-Transactions
-POST /transactions → Créer une nouvelle transaction
+## 🔐 Sécurité
 
-GET /transactions/:userId → Récupérer les transactions d’un utilisateur
+- Mots de passe hashés avec bcryptjs
+- Authentification via tokens JWT
+- Protection des routes avec middleware `authMiddleware.js`
+- Rôles insérés en base pour une gestion future des permissions
 
-Budgets
-POST /budget → Définir un budget mensuel
+---
 
-GET /budget/:userId → Récupérer le budget d’un utilisateur
+## 📂 Étapes suivantes
 
-Catégories
-GET /categories → Liste des catégories disponibles
-Paramètres
-GET /settings/:userId → Voir les paramètres
+- Tester les routes restantes sur Postman (budgets, paramètres, rapports, utilisateurs…)
+- Développer le **frontend de l’application**
+- 💡 j'hésites encore entre **React** ou **Angular**
+- Ce sera connecté à cette API backend
 
-PUT /settings/:userId → Modifier les paramètres
+---
 
-Rapports
-GET /reports/:userId → Générer un rapport personnalisé
+## ✍️ Auteur
 
-
-✅ Bonnes pratiques suivies
-Séparation claire des responsabilités
-
-Gestion centralisée des erreurs
-
-Middleware d’authentification
-
-Réutilisation de code avec des utilitaires
-
-Routes RESTful
-
-🔐 Sécurité
-Mots de passe hashés avec bcryptjs
-
-Authentification via tokens JWT
-
-Protection des routes sensibles
-
-Variables d’environnement sécurisées avec dotenv
-
-
-------
-
-
-Étapes à venir
-
-🔧 Création des tables SQL :
-Le fichier database/schema.sql sera rempli pour créer toutes les tables nécessaires à l’application.
-
-🧪 Tests avec Postman :
-Tous les endpoints seront testés un par un (méthodes GET, POST, PUT, DELETE) pour valider le fonctionnement de l'API.
-
-💻 Développement du Frontend :
-Une fois la partie backend testée et fonctionnelle, nous développerons l’interface utilisateur avec HTML, CSS, JS (et éventuellement React).
-
+Boris N.  
+Développeur Web Full Stack – Formation RNCP – 2025  
+📩 boris.namessi@outlook.fr
