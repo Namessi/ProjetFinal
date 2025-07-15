@@ -1,10 +1,12 @@
-// models/reportModel.js
-
 const db = require('../db/connection');
 
 // =====================================================
 // Créer un rapport personnalisé
-// Reçoit : id_user, titre, contenu
+// Paramètres :
+//  - id_user : identifiant de l'utilisateur
+//  - titre : titre du rapport
+//  - contenu : contenu du rapport
+// Retourne : l'id du rapport créé
 // =====================================================
 async function createReport(id_user, titre, contenu) {
   const [result] = await db.query(
@@ -16,6 +18,8 @@ async function createReport(id_user, titre, contenu) {
 
 // =====================================================
 // Récupérer tous les rapports d’un utilisateur
+// Paramètre : id_user (identifiant utilisateur)
+// Retourne : tableau des rapports de l'utilisateur
 // =====================================================
 async function getReportsByUserId(id_user) {
   const [rows] = await db.query(
@@ -27,6 +31,8 @@ async function getReportsByUserId(id_user) {
 
 // =====================================================
 // Récupérer un rapport par son ID
+// Paramètre : id_report (identifiant du rapport)
+// Retourne : un objet rapport ou undefined si non trouvé
 // =====================================================
 async function getReportById(id_report) {
   const [rows] = await db.query(
@@ -38,6 +44,10 @@ async function getReportById(id_report) {
 
 // =====================================================
 // Mettre à jour un rapport
+// Paramètres :
+//  - id_report : identifiant du rapport à modifier
+//  - titre : nouveau titre
+//  - contenu : nouveau contenu
 // =====================================================
 async function updateReport(id_report, titre, contenu) {
   await db.query(
@@ -48,6 +58,7 @@ async function updateReport(id_report, titre, contenu) {
 
 // =====================================================
 // Supprimer un rapport
+// Paramètre : id_report (identifiant du rapport)
 // =====================================================
 async function deleteReport(id_report) {
   await db.query(

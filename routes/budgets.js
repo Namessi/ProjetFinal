@@ -1,13 +1,11 @@
-// routes/budget.js
-
 const express = require('express');
 const router = express.Router();
 
 // Contrôleur dédié à la gestion des budgets
 const budgetController = require('../controllers/budgetController');
 
-// Middleware d'authentification JWT pour protéger les routes
-const authenticateToken = require('../middleware/authMiddleware');
+// Import du middleware
+const { authenticateToken } = require('../middleware/authMiddleware');
 
 // =====================================================
 // Créer un nouveau budget

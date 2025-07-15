@@ -1,12 +1,10 @@
-// controllers/settingsController.js
-
 const settingsModel = require('../models/settingsModel');
 
-// =====================================================
-// Récupérer les paramètres d’un utilisateur
-// Route : GET /api/settings/:userId
-// Sécurisée via middleware (token)
-// =====================================================
+/**
+ * Récupère les paramètres d’un utilisateur donné
+ * GET /api/settings/:userId
+ * Accès sécurisé via middleware d’authentification
+ */
 async function getUserSettings(req, res) {
   try {
     const id_user = req.params.userId;
@@ -24,11 +22,11 @@ async function getUserSettings(req, res) {
   }
 }
 
-// =====================================================
-// Mettre à jour les paramètres d’un utilisateur
-// Route : PUT /api/settings/:userId
-// Body attendu : { theme, langue_preferree, ... }
-// =====================================================
+/**
+ * Met à jour les paramètres d’un utilisateur donné
+ * PUT /api/settings/:userId
+ * Body attendu : { theme, langue_preferree, ... }
+ */
 async function updateUserSettings(req, res) {
   try {
     const id_user = req.params.userId;

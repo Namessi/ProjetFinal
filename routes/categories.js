@@ -1,13 +1,11 @@
-// routes/category.js
-
 const express = require('express');
 const router = express.Router();
 
 // Contrôleur pour la gestion des catégories
 const categoryController = require('../controllers/categoryController');
 
-// Middleware pour sécuriser les routes via JWT
-const authenticateToken = require('../middleware/authMiddleware');
+// Middleware JWT pour sécuriser les routes
+const { authenticateToken } = require('../middleware/authMiddleware');
 
 // =====================================================
 // Créer une nouvelle catégorie
@@ -39,5 +37,5 @@ router.put('/:categoryId', authenticateToken, categoryController.updateCategory)
 // =====================================================
 router.delete('/:categoryId', authenticateToken, categoryController.deleteCategory);
 
-// Exportation du routeur
+// Export du routeur Express
 module.exports = router;

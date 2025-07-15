@@ -1,5 +1,3 @@
-// routes/auth.js
-
 // On importe Express et on initialise le routeur
 const express = require('express');
 const router = express.Router();

@@ -9,32 +9,31 @@ require('dotenv').config();
 // ============================================================
 // Importation des modules nécessaires
 // ============================================================
-const express = require('express');         // Framework principal
-const cors = require('cors');               // Pour accepter les requêtes cross-origin (ex: React + API)
-const morgan = require('morgan');           // Pour afficher les requêtes HTTP dans la console
-const helmet = require('helmet');           // Pour sécuriser les headers HTTP (anti XSS, clickjacking, etc.)
-const compression = require('compression'); // Pour compresser les réponses HTTP (améliore les perfs)
+const express = require('express');          // Framework principal
+const cors = require('cors');                  // Pour gérer les requêtes cross-origin
+const morgan = require('morgan');              // Logger des requêtes HTTP
+const helmet = require('helmet');              // Sécurité HTTP headers
+const compression = require('compression');    // Compression des réponses HTTP
 
-const app = express();                      // Création de l'application Express
-const PORT = process.env.PORT || 3000;      // Port d'écoute du serveur (depuis .env ou 3000 par défaut)
+const app = express();                         // Création de l'application Express
+const PORT = process.env.PORT || 3000;         // Port d'écoute (variable d'env ou 3000)
 
 // ============================================================
-// Nettoyage de la console à chaque démarrage
-// (utile pendant le développement)
+// Nettoyage console au démarrage (utile en dev)
 // ============================================================
 console.clear();
 
 // ============================================================
 // Middlewares globaux
 // ============================================================
-app.use(cors());                    // Autorise les appels depuis d'autres origines (utile avec un front externe)
-app.use(express.json());           // Permet de lire les requêtes en JSON
-app.use(helmet());                 // Active les headers de sécurité
-app.use(compression());           // Compresse les réponses HTTP
-app.use(morgan('dev'));           // Affiche les requêtes HTTP dans la console (GET /api/users 200 - 15ms)
+app.use(cors());              // Autoriser appels cross-origin (ex: frontend React)
+app.use(express.json());      // Parse JSON dans le body des requêtes
+app.use(helmet());            // Sécuriser les headers HTTP
+app.use(compression());       // Compresser les réponses HTTP
+app.use(morgan('dev'));       // Logger les requêtes (ex: GET /api/users 200 - 15ms)
 
 // ============================================================
-// Importation des fichiers de routes (structure MVC)
+// Importation des routes (pattern MVC)
 // ============================================================
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
@@ -44,16 +43,24 @@ const budgetRoutes = require('./routes/budgets');
 const reportRoutes = require('./routes/reports');
 const settingsRoutes = require('./routes/settings');
 
+console.log('authRoutes =', typeof authRoutes);
+console.log('userRoutes =', typeof userRoutes);
+console.log('transactionRoutes =', typeof transactionRoutes);
+console.log('categoryRoutes =', typeof categoryRoutes);
+console.log('budgetRoutes =', typeof budgetRoutes);
+console.log('reportRoutes =', typeof reportRoutes);
+console.log('settingsRoutes =', typeof settingsRoutes);
+
 // ============================================================
 // Utilisation des routes avec préfixe /api/
 // ============================================================
-app.use('/api/auth', authRoutes);           // Inscription, connexion, JWT
-app.use('/api/users', userRoutes);          // Gestion des utilisateurs
-app.use('/api/transactions', transactionRoutes); // Ajout, modif, suppression de transactions
-app.use('/api/categories', categoryRoutes); // Liste et gestion des catégories
-app.use('/api/budgets', budgetRoutes);      // Définition et récupération de budgets
-app.use('/api/reports', reportRoutes);      // Rapports personnalisés
-app.use('/api/settings', settingsRoutes);   // Préférences utilisateurs (langue, thème, etc.)
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/transactions', transactionRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/budgets', budgetRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // ============================================================
 // Middleware de gestion des erreurs

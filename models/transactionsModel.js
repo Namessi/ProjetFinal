@@ -1,5 +1,3 @@
-// models/transactionsModel.js
-
 const db = require('../db/connection');
 
 // =====================================================
@@ -21,12 +19,11 @@ async function getTransactionById(user_id, transaction_id) {
     'SELECT * FROM transactions WHERE id = ? AND user_id = ?',
     [transaction_id, user_id]
   );
-  return rows[0]; // une seule transaction
+  return rows[0];
 }
 
 // =====================================================
 // Créer une nouvelle transaction
-// transactionData = { amount, category_id, date, description }
 // =====================================================
 async function createTransaction(user_id, transactionData) {
   const { amount, category_id, date, description } = transactionData;
@@ -39,8 +36,7 @@ async function createTransaction(user_id, transactionData) {
 }
 
 // =====================================================
-// Mettre à jour une transaction
-// updateData = { amount, description, ... }
+// Mettre à jour une transaction (sécurisée par user_id)
 // =====================================================
 async function updateTransaction(user_id, transaction_id, updateData) {
   const keys = Object.keys(updateData);
@@ -52,17 +48,19 @@ async function updateTransaction(user_id, transaction_id, updateData) {
   values.push(user_id, transaction_id);
 
   const sql = `UPDATE transactions SET ${setClause} WHERE user_id = ? AND id = ?`;
-  await db.query(sql, values);
+  const [result] = await db.query(sql, values);
+  return result;
 }
 
 // =====================================================
-// Supprimer une transaction
+// Supprimer une transaction (sécurisée par user_id)
 // =====================================================
 async function deleteTransaction(user_id, transaction_id) {
-  await db.query(
+  const [result] = await db.query(
     'DELETE FROM transactions WHERE user_id = ? AND id = ?',
     [user_id, transaction_id]
   );
+  return result;
 }
 
 module.exports = {

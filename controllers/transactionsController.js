@@ -1,10 +1,8 @@
-// controllers/transactionsController.js
-
 const transactionsModel = require('../models/transactionsModel');
 
 // =====================================================
 // Récupérer toutes les transactions d’un utilisateur
-// Route : GET /api/transactions/:id_user
+// Route : GET /api/transactions/user/:userId
 // =====================================================
 async function getAllTransactions(req, res) {
   try {
@@ -18,25 +16,30 @@ async function getAllTransactions(req, res) {
 
 // =====================================================
 // Récupérer une transaction par son ID
-// Route : GET /api/transactions/:id_user/:id_transaction
+// Route : GET /api/transactions/:transactionId
+// L’utilisateur est authentifié (id dans token)
 // =====================================================
 async function getTransactionById(req, res) {
   try {
-    const { userId: id_user, transactionId: id_transaction } = req.params;
+    const id_user = req.user.id;
+    const id_transaction = req.params.transactionId;
+
     const transaction = await transactionsModel.getTransactionById(id_user, id_transaction);
     if (!transaction) {
       return res.status(404).json({ message: 'Transaction non trouvée' });
     }
     res.json(transaction);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error: 'Une erreur est survenue sur le serveur. Veuillez réessayer plus tard.',
+      details: error.message,
+    });
   }
 }
 
 // =====================================================
 // Ajouter une nouvelle transaction
-// Route : POST /api/transactions/:id_user
-// Body : { montant, id_categorie, date_transaction, description }
+// Route : POST /api/transactions/user/:userId
 // =====================================================
 async function createTransaction(req, res) {
   try {
@@ -51,14 +54,20 @@ async function createTransaction(req, res) {
 
 // =====================================================
 // Mettre à jour une transaction
-// Route : PUT /api/transactions/:id_user/:id_transaction
-// Body : { montant, description, ... }
+// Route : PUT /api/transactions/:transactionId
 // =====================================================
 async function updateTransaction(req, res) {
   try {
-    const { userId: id_user, transactionId: id_transaction } = req.params;
+    const id_user = req.user.id;
+    const id_transaction = req.params.transactionId;
     const updateData = req.body;
-    await transactionsModel.updateTransaction(id_user, id_transaction, updateData);
+
+    const result = await transactionsModel.updateTransaction(id_user, id_transaction, updateData);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Transaction non trouvée ou non modifiée' });
+    }
+
     res.json({ message: 'Transaction mise à jour' });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -67,19 +76,24 @@ async function updateTransaction(req, res) {
 
 // =====================================================
 // Supprimer une transaction
-// Route : DELETE /api/transactions/:id_user/:id_transaction
+// Route : DELETE /api/transactions/:transactionId
 // =====================================================
 async function deleteTransaction(req, res) {
   try {
-    const { userId: id_user, transactionId: id_transaction } = req.params;
-    await transactionsModel.deleteTransaction(id_user, id_transaction);
+    const id_user = req.user.id;
+    const id_transaction = req.params.transactionId;
+
+    const result = await transactionsModel.deleteTransaction(id_user, id_transaction);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Transaction non trouvée ou déjà supprimée' });
+    }
+
     res.json({ message: 'Transaction supprimée' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: 'Une erreur est survenue sur le serveur.', error: error.message });
   }
 }
 
-// Export des fonctions pour les routes
 module.exports = {
   getAllTransactions,
   getTransactionById,

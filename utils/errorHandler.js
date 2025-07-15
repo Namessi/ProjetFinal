@@ -13,7 +13,7 @@ function errorHandler(err, req, res, next) {
   // Envoie une réponse générique pour éviter de divulguer des infos sensibles
   res.status(500).json({
     error: 'Une erreur est survenue sur le serveur. Veuillez réessayer plus tard.',
-    details: err.message, // Optionnel : peut être supprimé en prod
+    details: err.message, // Optionnel : peut être supprimé en production
   });
 }
 

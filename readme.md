@@ -69,91 +69,96 @@ Autres fichiers :
 ## ✅ Fonctionnalités principales
 
 - Authentification sécurisée (inscription, connexion, JWT, hash des mots de passe)
-- Création et connexion utilisateur
-- Ajout de transactions avec catégories
-- Définition de budgets mensuels personnalisés
-- Paramètres personnalisés par utilisateur
-- Catégorisation : dépenses / revenus
-- Génération de rapports mensuels
-- Middleware d'authentification sur routes sensibles
-- Structure MVC claire et scalable
+- Gestion complète des utilisateurs
+- CRUD complet sur les transactions
+- Gestion et suivi des budgets mensuels
+- Paramètres personnalisés par utilisateur (thème, langue, notifications…)
+- Catégorisation des dépenses et revenus
+- Rapports personnalisés et statistiques mensuelles
+- Middleware d’authentification et gestion des rôles (admin/utilisateur)
+- Architecture MVC claire et évolutive
 
----
+📌 Exemples d’Endpoints
 
-## 📌 Exemples d’Endpoints
+Authentification
 
-### 🔐 Authentification
-- `POST /api/auth/register` → Créer un nouveau compte utilisateur
-- `POST /api/auth/login` → Connexion avec génération de token JWT
+- POST /api/auth/register → Création d’un compte utilisateur
+- POST /api/auth/login → Connexion et génération d’un token JWT
 
-### 👤 Utilisateurs
-- `GET /api/users` → Récupérer tous les utilisateurs
-- `PUT /api/users/:id` → Mettre à jour un utilisateur
-- `DELETE /api/users/:id` → Supprimer un utilisateur
+Utilisateurs
 
-### 💸 Transactions
-- `POST /api/transactions/user/:userId` → Créer une transaction
-- `GET /api/transactions/user/:userId` → Récupérer les transactions
-- `PUT /api/transactions/:transactionId` → Modifier une transaction
-- `DELETE /api/transactions/:transactionId` → Supprimer une transaction
+- GET /api/users → Liste des utilisateurs (admin uniquement)
+- GET /api/users/:id → Récupérer un utilisateur
+- PUT /api/users/:id → Modifier un utilisateur
+- DELETE /api/users/:id → Supprimer un utilisateur
 
-### 📊 Budgets
-- `POST /api/budget` → Définir un budget mensuel
-- `GET /api/budget/:userId` → Voir les budgets d’un utilisateur
+Transactions
 
-### 🗂️ Catégories
-- `GET /api/categories` → Liste des 16 catégories (alimentation, logement, revenus...)
+- POST /api/transactions/user/:userId → Créer une transaction
+- GET /api/transactions/user/:userId → Récupérer les transactions
+- PUT /api/transactions/:transactionId → Modifier une transaction
+- DELETE /api/transactions/:transactionId → Supprimer une transaction
 
-### ⚙️ Paramètres
-- `GET /api/settings/:userId` → Voir les préférences utilisateur
-- `PUT /api/settings/:userId` → Modifier thème, langue, etc.
+Budgets
 
-### 📈 Rapports
-- `GET /api/reports/:userId` → Statistiques mensuelles (revenus - dépenses)
+- POST /api/budgets → Créer un budget
+- GET /api/budgets/:userId → Voir les budgets d’un utilisateur
+- PUT /api/budgets/:budgetId → Mettre à jour un budget
+- DELETE /api/budgets/:budgetId → Supprimer un budget
 
----
+Catégories
 
-## 🧪 Tests réalisés (Postman)
+- POST /api/categories → Créer une catégorie
+- GET /api/categories/:userId → Récupérer catégories d’un utilisateur
+- PUT /api/categories/:categoryId → Modifier une catégorie
+- DELETE /api/categories/:categoryId → Supprimer une catégorie
 
-- ✅ `POST /auth/register` (Inscription) → OK
-- ✅ `POST /auth/login` (Connexion + Token) → OK
-- ✅ `POST /transactions/user/:userId` (Création transaction) → OK
+Paramètres utilisateur
 
-🔜 **Les autres routes seront testées plus tard**, après ce premier commit stable.
+- GET /api/settings/:userId → Voir préférences
+- PUT /api/settings/:userId → Modifier préférences
 
----
+Rapports
 
-## ✅ Bonnes pratiques respectées
+- POST /api/reports → Créer un rapport
+- GET /api/reports/:userId → Récupérer rapports
+- GET /api/reports/detail/:reportId → Détails d’un rapport
+- PUT /api/reports/:reportId → Mettre à jour un rapport
+- DELETE /api/reports/:reportId → Supprimer un rapport
 
-- Séparation des responsabilités (controllers, routes, models)
+🧪 Tests réalisés (Postman)
+
+Toutes les routes listées ci-dessus ont été testées avec succès, incluant :
+
+- Inscription, connexion et JWT
+- Gestion complète des utilisateurs, transactions, budgets, catégories
+- Gestion des paramètres utilisateur
+- CRUD complet des rapports personnalisés
+
+✅ Bonnes pratiques
+
+- Architecture MVC respectée
 - Gestion centralisée des erreurs
-- Middleware d’authentification pour sécuriser les accès
-- Réutilisation de fonctions utilitaires
-- Nom des routes cohérent avec REST
-- Variables sensibles dans un `.env`
+- Protection des routes via middleware JWT
+- Variables sensibles en .env
+- Code clair, commenté et indenté
+- Routes RESTful cohérentes
+- Mots de passe hashés (bcryptjs)
 
----
+🔐 Sécurité
 
-## 🔐 Sécurité
+- Authentification JWT avec clé secrète sécurisée
+- Contrôle d’accès basé sur rôles (admin/utilisateur)
+- Middleware d’authentification sur routes sensibles
 
-- Mots de passe hashés avec bcryptjs
-- Authentification via tokens JWT
-- Protection des routes avec middleware `authMiddleware.js`
-- Rôles insérés en base pour une gestion future des permissions
+📂 Étapes suivantes
 
----
+- Développement frontend (React ou Angular à définir)
+- Intégration complète avec ce backend
+- Ajout de tests automatisés et optimisation
 
-## 📂 Étapes suivantes
+✍️ Auteur
 
-- Tester les routes restantes sur Postman (budgets, paramètres, rapports, utilisateurs…)
-- Développer le **frontend de l’application**
-- 💡 j'hésites encore entre **React** ou **Angular**
-- Ce sera connecté à cette API backend
-
----
-
-## ✍️ Auteur
-
-Boris N.  
-Développeur Web Full Stack – Formation RNCP – 2025  
+Kossi Boris Namessi
+Développeur Web Full Stack – Formation RNCP – 2025
 📩 boris.namessi@outlook.fr

@@ -1,15 +1,14 @@
-// controllers/reportController.js
-
 const reportModel = require('../models/reportModel');
 
-// =====================================================
-// Créer un rapport
-// Body attendu : { titre, contenu }
-// ID utilisateur récupéré via le token
-// =====================================================
+/**
+ * Crée un nouveau rapport pour l'utilisateur authentifié
+ * POST /api/reports/
+ * Body attendu : { titre, contenu }
+ * L’ID utilisateur est extrait du token JWT (req.user.id)
+ */
 async function createReport(req, res) {
   try {
-    const id_user = req.user.id_user; // Authentifié via JWT
+    const id_user = req.user.id;
     const { titre, contenu } = req.body;
 
     if (!titre || !contenu) {
@@ -24,10 +23,10 @@ async function createReport(req, res) {
   }
 }
 
-// =====================================================
-// Récupérer tous les rapports d’un utilisateur
-// Paramètre : :userId
-// =====================================================
+/**
+ * Récupère tous les rapports d’un utilisateur
+ * GET /api/reports/:userId
+ */
 async function getUserReports(req, res) {
   try {
     const id_user = req.params.userId;
@@ -39,10 +38,10 @@ async function getUserReports(req, res) {
   }
 }
 
-// =====================================================
-// Récupérer un rapport par son ID
-// Paramètre : :reportId
-// =====================================================
+/**
+ * Récupère un rapport par son ID
+ * GET /api/reports/detail/:reportId
+ */
 async function getReportById(req, res) {
   try {
     const id_report = req.params.reportId;
@@ -59,11 +58,11 @@ async function getReportById(req, res) {
   }
 }
 
-// =====================================================
-// Mettre à jour un rapport
-// Paramètre : :reportId
-// Body attendu : { titre, contenu }
-// =====================================================
+/**
+ * Met à jour un rapport existant
+ * PUT /api/reports/:reportId
+ * Body attendu : { titre, contenu }
+ */
 async function updateReport(req, res) {
   try {
     const id_report = req.params.reportId;
@@ -81,10 +80,10 @@ async function updateReport(req, res) {
   }
 }
 
-// =====================================================
-// Supprimer un rapport
-// Paramètre : :reportId
-// =====================================================
+/**
+ * Supprime un rapport
+ * DELETE /api/reports/:reportId
+ */
 async function deleteReport(req, res) {
   try {
     const id_report = req.params.reportId;

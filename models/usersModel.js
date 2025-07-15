@@ -1,12 +1,45 @@
 const db = require('../db/connection');
 
+// =====================================================
+// Récupérer tous les utilisateurs (pour les admins)
+// =====================================================
+async function getAllUsers() {
+  const [rows] = await db.query(`
+    SELECT 
+      users.id, 
+      users.username, 
+      users.email, 
+      users.created_at,
+      roles.nom_role AS role
+    FROM users
+    LEFT JOIN roles ON users.id_role = roles.id_role
+    ORDER BY users.created_at DESC
+  `);
+  return rows;
+}
+
+// =====================================================
 // Récupérer un utilisateur par son ID
+// =====================================================
 async function getUserById(userId) {
-  const [rows] = await db.query('SELECT id, username, email, created_at FROM users WHERE id = ?', [userId]);
+  const [rows] = await db.query(
+    `SELECT 
+      users.id, 
+      users.username, 
+      users.email, 
+      users.created_at,
+      roles.nom_role AS role
+     FROM users
+     LEFT JOIN roles ON users.id_role = roles.id_role
+     WHERE users.id = ?`,
+    [userId]
+  );
   return rows[0];
 }
 
-// Mettre à jour un utilisateur (les champs à mettre à jour sont dans updateData)
+// =====================================================
+// Mettre à jour un utilisateur
+// =====================================================
 async function updateUser(userId, updateData) {
   const keys = Object.keys(updateData);
   const values = Object.values(updateData);
@@ -20,12 +53,15 @@ async function updateUser(userId, updateData) {
   await db.query(sql, values);
 }
 
-// Supprimer un utilisateur par son ID
+// =====================================================
+// Supprimer un utilisateur
+// =====================================================
 async function deleteUser(userId) {
   await db.query('DELETE FROM users WHERE id = ?', [userId]);
 }
 
 module.exports = {
+  getAllUsers,
   getUserById,
   updateUser,
   deleteUser,

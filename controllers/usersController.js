@@ -1,6 +1,24 @@
 const usersModel = require('../models/usersModel');
 
-// Récupérer un utilisateur par son ID
+// =====================================================
+// 1. Récupérer tous les utilisateurs (ADMIN uniquement)
+// =====================================================
+async function getAllUsers(req, res) {
+  try {
+    // Supposé que le middleware a déjà validé le rôle admin
+    const users = await usersModel.getAllUsers();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({
+      message: 'Erreur lors de la récupération des utilisateurs',
+      error: error.message,
+    });
+  }
+}
+
+// =====================================================
+// 2. Récupérer un utilisateur par son ID
+// =====================================================
 async function getUserById(req, res) {
   try {
     const userId = req.params.userId;
@@ -14,7 +32,9 @@ async function getUserById(req, res) {
   }
 }
 
-// Mettre à jour un utilisateur
+// =====================================================
+// 3. Mettre à jour un utilisateur
+// =====================================================
 async function updateUser(req, res) {
   try {
     const userId = req.params.userId;
@@ -26,7 +46,9 @@ async function updateUser(req, res) {
   }
 }
 
-// Supprimer un utilisateur
+// =====================================================
+// 4. Supprimer un utilisateur
+// =====================================================
 async function deleteUser(req, res) {
   try {
     const userId = req.params.userId;
@@ -38,6 +60,7 @@ async function deleteUser(req, res) {
 }
 
 module.exports = {
+  getAllUsers,
   getUserById,
   updateUser,
   deleteUser,

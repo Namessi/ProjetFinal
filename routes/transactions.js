@@ -1,13 +1,11 @@
-// routes/transactions.js
-
 const express = require('express');
 const router = express.Router();
 
 // Contrôleur pour les transactions
 const transactionsController = require('../controllers/transactionsController');
 
-// Middleware JWT pour sécuriser toutes les routes
-const authenticateToken = require('../middleware/authMiddleware');
+// Import du middleware (extrait depuis l’objet exporté)
+const { authenticateToken } = require('../middleware/authMiddleware');
 
 // =====================================================
 // Récupérer toutes les transactions d’un utilisateur

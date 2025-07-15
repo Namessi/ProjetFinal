@@ -1,22 +1,24 @@
-// controllers/categoryController.js
-
 const categoryModel = require('../models/categoryModel');
 
-// =====================================================
-// Créer une catégorie
-// Body attendu : { nom, type }
-// L’ID utilisateur est récupéré depuis le token (req.user.id_user)
-// =====================================================
+/**
+ * Crée une nouvelle catégorie pour l'utilisateur authentifié
+ * POST /api/categories/
+ * Body attendu : { name, type }
+ * L’ID utilisateur est extrait du token JWT (req.user.id)
+ */
 async function createCategory(req, res) {
   try {
-    const id_user = req.user.id_user;
-    const { nom, type } = req.body;
+    console.log("🔍 REQ.USER =", req.user);
+    console.log("🔍 BODY =", req.body);
 
-    if (!nom || !type) {
+    const id_user = req.user.id;
+    const { name, type } = req.body;
+
+    if (!name || !type) {
       return res.status(400).json({ message: 'Nom et type requis' });
     }
 
-    const categoryId = await categoryModel.createCategory(id_user, nom, type);
+    const categoryId = await categoryModel.createCategory(id_user, name, type);
     res.status(201).json({ message: 'Catégorie créée', categoryId });
   } catch (error) {
     console.error('Erreur dans createCategory :', error);
@@ -24,10 +26,10 @@ async function createCategory(req, res) {
   }
 }
 
-// =====================================================
-// Récupérer les catégories d’un utilisateur
-// Paramètre attendu : :userId dans l’URL
-// =====================================================
+/**
+ * Récupère toutes les catégories d’un utilisateur
+ * GET /api/categories/:userId
+ */
 async function getUserCategories(req, res) {
   try {
     const id_user = req.params.userId;
@@ -39,21 +41,21 @@ async function getUserCategories(req, res) {
   }
 }
 
-// =====================================================
-// Mettre à jour une catégorie
-// Paramètre : :categoryId
-// Body attendu : { nom, type }
-// =====================================================
+/**
+ * Met à jour une catégorie existante
+ * PUT /api/categories/:categoryId
+ * Body attendu : { name, type }
+ */
 async function updateCategory(req, res) {
   try {
     const id_categorie = req.params.categoryId;
-    const { nom, type } = req.body;
+    const { name, type } = req.body;
 
-    if (!nom || !type) {
+    if (!name || !type) {
       return res.status(400).json({ message: 'Nom et type requis pour la mise à jour' });
     }
 
-    await categoryModel.updateCategory(id_categorie, nom, type);
+    await categoryModel.updateCategory(id_categorie, name, type);
     res.json({ message: 'Catégorie mise à jour' });
   } catch (error) {
     console.error('Erreur dans updateCategory :', error);
@@ -61,10 +63,10 @@ async function updateCategory(req, res) {
   }
 }
 
-// =====================================================
-// Supprimer une catégorie
-// Paramètre : :categoryId
-// =====================================================
+/**
+ * Supprime une catégorie
+ * DELETE /api/categories/:categoryId
+ */
 async function deleteCategory(req, res) {
   try {
     const id_categorie = req.params.categoryId;
