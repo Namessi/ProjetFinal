@@ -42,6 +42,13 @@ const categoryRoutes = require('./routes/categories');
 const budgetRoutes = require('./routes/budgets');
 const reportRoutes = require('./routes/reports');
 const settingsRoutes = require('./routes/settings');
+const transfersRoutes = require('./routes/transfers');
+const notificationRoutes = require('./routes/notifications');
+const topupRoutes = require('./routes/topup');
+const recipientRoutes = require('./routes/recipients');
+const rewardsRoutes = require('./routes/rewards');
+const qrcodeRoutes = require('./routes/qrcode');
+
 
 console.log('authRoutes =', typeof authRoutes);
 console.log('userRoutes =', typeof userRoutes);
@@ -50,6 +57,12 @@ console.log('categoryRoutes =', typeof categoryRoutes);
 console.log('budgetRoutes =', typeof budgetRoutes);
 console.log('reportRoutes =', typeof reportRoutes);
 console.log('settingsRoutes =', typeof settingsRoutes);
+console.log('transfersRoutes =', typeof transfersRoutes);
+console.log('notificationRoutes =', typeof notificationRoutes);
+console.log('topupRoutes =', typeof topupRoutes);
+console.log('recipientRoutes =', typeof recipientRoutes);
+console.log('rewardsRoutes =', typeof rewardsRoutes);
+console.log('qrcodeRoutes =', typeof qrcodeRoutes);
 
 // ============================================================
 // Utilisation des routes avec préfixe /api/
@@ -61,6 +74,12 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/transfers', transfersRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/topup', topupRoutes);
+app.use('/api/recipients', recipientRoutes);
+app.use('/api/rewards', rewardsRoutes);
+app.use('/api/qrcode', qrcodeRoutes);
 
 // ============================================================
 // Middleware de gestion des erreurs

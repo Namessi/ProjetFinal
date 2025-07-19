@@ -84,8 +84,109 @@ CREATE TABLE IF NOT EXISTS transactions (
         REFERENCES categories(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
 -- ===========================================================
--- 6. Table : password_resets
+-- 6. Table : transfers
+-- Transferts d’argent entre utilisateurs ou vers l’extérieur
+-- ===========================================================
+CREATE TABLE IF NOT EXISTS transfers (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT UNSIGNED NOT NULL,
+    receiver_id INT UNSIGNED DEFAULT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    type ENUM('friend', 'bank') NOT NULL,
+    transaction_id INT UNSIGNED DEFAULT NULL,
+    date_transfert TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_transfer_sender FOREIGN KEY (sender_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_transfer_receiver FOREIGN KEY (receiver_id)
+        REFERENCES users(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_transfer_transaction FOREIGN KEY (transaction_id)
+        REFERENCES transactions(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ===========================================================
+-- Table : notifications
+-- Notifications envoyées à un utilisateur
+-- ===========================================================
+CREATE TABLE IF NOT EXISTS notifications (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    titre VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    type VARCHAR(50) DEFAULT 'info',
+    date_envoi TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    lue TINYINT(1) DEFAULT 0,
+    CONSTRAINT fk_notification_user FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Notifications envoyées aux utilisateurs';
+
+
+-- ===========================================================
+-- Table : topups
+-- Historique des rechargements de compte
+-- ===========================================================
+CREATE TABLE IF NOT EXISTS topups (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    montant DECIMAL(10, 2) NOT NULL,
+    mode_paiement VARCHAR(50) NOT NULL,
+    date_topup TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_topup_user FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ===========================================================
+-- 6. Table : rewards
+-- Points de fidélité, cadeaux ou récompenses utilisateurs
+-- ===========================================================
+CREATE TABLE IF NOT EXISTS rewards (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    points INT NOT NULL DEFAULT 0,
+    type VARCHAR(100) NOT NULL, -- exemple : "bonus", "cashback", "cadeau"
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_rewards_user FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Récompenses et fidélité utilisateurs';
+
+
+-- ===========================================================
+-- Table : recipients
+-- Contacts favoris de l'utilisateur (amis, destinataires)
+-- ===========================================================
+CREATE TABLE IF NOT EXISTS recipients (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    destinataire_id INT UNSIGNED NOT NULL,
+    alias VARCHAR(100) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_recipient_user FOREIGN KEY (user_id)
+        REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_recipient_destinataire FOREIGN KEY (destinataire_id)
+        REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY uq_user_destinataire (user_id, destinataire_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Contacts utilisateurs enregistrés';
+
+
+-- ===========================================================
+-- 7. Table : password_resets
 -- Réinitialisation de mot de passe
 -- ===========================================================
 CREATE TABLE IF NOT EXISTS password_resets (
@@ -100,7 +201,7 @@ CREATE TABLE IF NOT EXISTS password_resets (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ===========================================================
--- 7. Table : notifications
+-- 8. Table : notifications
 -- Notifications envoyées aux utilisateurs
 -- ===========================================================
 CREATE TABLE IF NOT EXISTS notifications (
@@ -116,7 +217,7 @@ CREATE TABLE IF NOT EXISTS notifications (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ===========================================================
--- 8. Table : budgets
+-- 9. Table : budgets
 -- Budgets alloués par catégorie et par période
 -- ===========================================================
 CREATE TABLE IF NOT EXISTS budgets (
@@ -139,7 +240,7 @@ CREATE TABLE IF NOT EXISTS budgets (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ===========================================================
--- 9. Table : monthly_statistics
+-- 10. Table : monthly_statistics
 -- Calculs automatiques mensuels (revenus, dépenses, épargne)
 -- ===========================================================
 CREATE TABLE IF NOT EXISTS monthly_statistics (
@@ -158,7 +259,7 @@ CREATE TABLE IF NOT EXISTS monthly_statistics (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ===========================================================
--- 10. Table : settings
+-- 11. Table : settings
 -- Préférences utilisateur (langue, thème, etc.)
 -- ===========================================================
 CREATE TABLE IF NOT EXISTS settings (
@@ -177,7 +278,7 @@ CREATE TABLE IF NOT EXISTS settings (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ===========================================================
--- 11. Table : comments
+-- 12. Table : comments
 -- Commentaires sur les transactions
 -- ===========================================================
 CREATE TABLE IF NOT EXISTS comments (
@@ -195,3 +296,22 @@ CREATE TABLE IF NOT EXISTS comments (
         ON DELETE SET NULL
         ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ===========================================================
+-- 13. Table : reports
+-- Signalements ou rapports d'erreur soumis par les utilisateurs
+-- ===========================================================
+CREATE TABLE IF NOT EXISTS reports (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL COMMENT 'Utilisateur ayant soumis le rapport',
+    subject VARCHAR(255) NOT NULL COMMENT 'Sujet ou titre du rapport',
+    message TEXT NOT NULL COMMENT 'Description détaillée du problème ou suggestion',
+    status ENUM('ouvert', 'en_cours', 'resolu', 'ferme') DEFAULT 'ouvert' COMMENT 'Statut du rapport',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_reports_user FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Signalements d\'erreurs ou suggestions par les utilisateurs';
